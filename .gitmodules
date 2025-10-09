@@ -1,0 +1,4 @@
+[submodule "thirdparty/FFmpeg"]
+	path = thirdparty/FFmpeg
+	url = git@github.com:BriochePuppet/FFmpeg.git
+	branch = master

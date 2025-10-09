@@ -1,0 +1,6 @@
+#ifndef OPENCV_CVCONFIG_H_FORWARDED
+#define OPENCV_CVCONFIG_H_FORWARDED
+
+#include "opencv2/cvconfig.h"
+
+#endif // OPENCV_CVCONFIG_H_INCLUDED

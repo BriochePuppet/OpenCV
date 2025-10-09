@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\modules\core\src\algorithm.cpp" />
+    <ClCompile Include="..\modules\core\src\alloc.cpp" />
+    <ClCompile Include="..\modules\core\src\arithm.cpp" />
+    <ClCompile Include="..\modules\core\src\arithm.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\array.cpp" />
+    <ClCompile Include="..\modules\core\src\async.cpp" />
+    <ClCompile Include="..\modules\core\src\batch_distance.cpp" />
+    <ClCompile Include="..\modules\core\src\bindings_utils.cpp" />
+    <ClCompile Include="..\modules\core\src\buffer_area.cpp" />
+    <ClCompile Include="..\modules\core\src\channels.cpp" />
+    <ClCompile Include="..\modules\core\src\check.cpp" />
+    <ClCompile Include="..\modules\core\src\command_line_parser.cpp" />
+    <ClCompile Include="..\modules\core\src\conjugate_gradient.cpp" />
+    <ClCompile Include="..\modules\core\src\convert.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\convert_c.cpp" />
+    <ClCompile Include="..\modules\core\src\convert_scale.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\copy.cpp" />
+    <ClCompile Include="..\modules\core\src\count_non_zero.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\cuda_gpu_mat.cpp" />
+    <ClCompile Include="..\modules\core\src\cuda_host_mem.cpp" />
+    <ClCompile Include="..\modules\core\src\cuda_info.cpp" />
+    <ClCompile Include="..\modules\core\src\cuda_stream.cpp" />
+    <ClCompile Include="..\modules\core\src\datastructs.cpp" />
+    <ClCompile Include="..\modules\core\src\directx.cpp" />
+    <ClCompile Include="..\modules\core\src\downhill_simplex.cpp" />
+    <ClCompile Include="..\modules\core\src\dxt.cpp" />
+    <ClCompile Include="..\modules\core\src\glob.cpp" />
+    <ClCompile Include="..\modules\core\src\gl_core_3_1.cpp" />
+    <ClCompile Include="..\modules\core\src\hal_internal.cpp" />
+    <ClCompile Include="..\modules\core\src\kmeans.cpp" />
+    <ClCompile Include="..\modules\core\src\lapack.cpp" />
+    <ClCompile Include="..\modules\core\src\lda.cpp" />
+    <ClCompile Include="..\modules\core\src\logger.cpp" />
+    <ClCompile Include="..\modules\core\src\lpsolver.cpp" />
+    <ClCompile Include="..\modules\core\src\lut.cpp" />
+    <ClCompile Include="..\modules\core\src\mathfuncs.cpp" />
+    <ClCompile Include="..\modules\core\src\mathfuncs_core.avx.cpp" />
+    <ClCompile Include="..\modules\core\src\mathfuncs_core.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\matmul.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\matrix.cpp" />
+    <ClCompile Include="..\modules\core\src\matrix_c.cpp" />
+    <ClCompile Include="..\modules\core\src\matrix_decomp.cpp" />
+    <ClCompile Include="..\modules\core\src\matrix_expressions.cpp" />
+    <ClCompile Include="..\modules\core\src\matrix_iterator.cpp" />
+    <ClCompile Include="..\modules\core\src\matrix_operations.cpp" />
+    <ClCompile Include="..\modules\core\src\matrix_sparse.cpp" />
+    <ClCompile Include="..\modules\core\src\matrix_transform.cpp" />
+    <ClCompile Include="..\modules\core\src\matrix_wrap.cpp" />
+    <ClCompile Include="..\modules\core\src\mean.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\merge.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\minmax.cpp" />
+    <ClCompile Include="..\modules\core\src\norm.cpp" />
+    <ClCompile Include="..\modules\core\src\ocl.cpp" />
+    <ClCompile Include="..\modules\core\src\opengl.cpp" />
+    <ClCompile Include="..\modules\core\src\out.cpp" />
+    <ClCompile Include="..\modules\core\src\ovx.cpp" />
+    <ClCompile Include="..\modules\core\src\parallel.cpp" />
+    <ClCompile Include="..\modules\core\src\parallel_impl.cpp" />
+    <ClCompile Include="..\modules\core\src\pca.cpp" />
+    <ClCompile Include="..\modules\core\src\persistence.cpp" />
+    <ClCompile Include="..\modules\core\src\persistence_base64.cpp" />
+    <ClCompile Include="..\modules\core\src\persistence_c.cpp" />
+    <ClCompile Include="..\modules\core\src\persistence_cpp.cpp" />
+    <ClCompile Include="..\modules\core\src\persistence_json.cpp" />
+    <ClCompile Include="..\modules\core\src\persistence_types.cpp" />
+    <ClCompile Include="..\modules\core\src\persistence_xml.cpp" />
+    <ClCompile Include="..\modules\core\src\persistence_yml.cpp" />
+    <ClCompile Include="..\modules\core\src\rand.cpp" />
+    <ClCompile Include="..\modules\core\src\softfloat.cpp" />
+    <ClCompile Include="..\modules\core\src\split.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\stat.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\stat_c.cpp" />
+    <ClCompile Include="..\modules\core\src\stl.cpp" />
+    <ClCompile Include="..\modules\core\src\sum.dispatch.cpp" />
+    <ClCompile Include="..\modules\core\src\system.cpp" />
+    <ClCompile Include="..\modules\core\src\tables.cpp" />
+    <ClCompile Include="..\modules\core\src\trace.cpp" />
+    <ClCompile Include="..\modules\core\src\types.cpp" />
+    <ClCompile Include="..\modules\core\src\umatrix.cpp" />
+    <ClCompile Include="..\modules\core\src\utils\datafile.cpp" />
+    <ClCompile Include="..\modules\core\src\utils\filesystem.cpp" />
+    <ClCompile Include="..\modules\core\src\utils\samples.cpp" />
+    <ClCompile Include="..\modules\core\src\va_intel.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\accum.avx.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\accum.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\accum.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\approx.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\bilateral_filter.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\blend.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\box_filter.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\canny.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\clahe.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\color.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\colormap.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\color_hsv.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\color_lab.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\color_rgb.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\color_yuv.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\connectedcomponents.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\contours.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\convhull.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\corner.avx.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\corner.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\cornersubpix.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\demosaicing.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\deriv.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\distransform.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\drawing.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\emd.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\featureselect.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\filter.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\floodfill.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\gabor.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\generalized_hough.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\geometry.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\grabcut.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\hershey_fonts.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\histogram.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\hough.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\imgwarp.avx2.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\imgwarp.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\imgwarp.sse4_1.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\intersection.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\linefit.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\lsd.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\main.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\matchcontours.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\median_blur.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\min_enclosing_triangle.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\moments.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\morph.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\phasecorr.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\pyramids.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\resize.avx2.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\resize.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\resize.sse4_1.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\rotcalipers.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\samplers.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\segmentation.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\shapedescr.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\smooth.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\spatialgradient.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\subdivision2d.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\sumpixels.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\tables.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\templmatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\thresh.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\undistort.dispatch.cpp" />
+    <ClCompile Include="..\modules\imgproc\src\utils.cpp" />
+    <ClCompile Include="..\modules\videoio\src\cap.cpp" />
+    <ClCompile Include="..\modules\videoio\src\cap_cmu.cpp" />
+    <ClCompile Include="..\modules\videoio\src\cap_msmf.cpp" />
+    <ClCompile Include="..\modules\videoio\src\container_avi.cpp" />
+    <ClCompile Include="..\modules\videoio\src\videoio_c.cpp" />
+    <ClCompile Include="..\modules\videoio\src\videoio_registry.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{20AF1BFB-9677-455B-BDF7-7CB9F1A96CF0}</ProjectGuid>
+    <RootNamespace>opencv</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__OPENCV_BUILD=1;OPENCV_ALLOCATOR_STATS_COUNTER_TYPE=long long;Z_SOLO=1;_WIN32_WINNT=0x0601;NOMINMAX=1;WIN32_LEAN_AND_MEAN=1;_CRT_SECURE_NO_WARNINGS=1;_USE_MATH_DEFINES=1;_VARIADIC_MAX=10;_LIB;_DEBUG;WIN32;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)\$(ProjectName)\$(ProjectName)\%(RelativeDir)\</ObjectFileName>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <AssemblerListingLocation>$(IntDir)\$(ProjectName)\$(ProjectName)\%(RelativeDir)\</AssemblerListingLocation>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\modules\core\include;$(ProjectDir)\..\modules\imgproc\include;$(ProjectDir)\..\modules\videoio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__OPENCV_BUILD=1;OPENCV_ALLOCATOR_STATS_COUNTER_TYPE=long long;Z_SOLO=1;_WIN32_WINNT=0x0601;NOMINMAX=1;WIN32_LEAN_AND_MEAN=1;_CRT_SECURE_NO_WARNINGS=1;_USE_MATH_DEFINES=1;_VARIADIC_MAX=10;_LIB;NDEBUG;WIN32;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)\$(ProjectName)\$(ProjectName)\%(RelativeDir)\</ObjectFileName>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\modules\core\include;$(ProjectDir)\..\modules\imgproc\include;$(ProjectDir)\..\modules\videoio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)\$(ProjectName)\$(ProjectName)\%(RelativeDir)\</AssemblerListingLocation>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__OPENCV_BUILD=1;OPENCV_ALLOCATOR_STATS_COUNTER_TYPE=long long;Z_SOLO=1;_WIN32_WINNT=0x0601;NOMINMAX=1;WIN32_LEAN_AND_MEAN=1;_CRT_SECURE_NO_WARNINGS=1;_USE_MATH_DEFINES=1;_VARIADIC_MAX=10;_LIB;_DEBUG;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)\$(ProjectName)\$(ProjectName)\%(RelativeDir)\</ObjectFileName>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <AssemblerListingLocation>$(IntDir)\$(ProjectName)\$(ProjectName)\%(RelativeDir)\</AssemblerListingLocation>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\modules\core\include;$(ProjectDir)\..\modules\imgproc\include;$(ProjectDir)\..\modules\videoio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>__OPENCV_BUILD=1;OPENCV_ALLOCATOR_STATS_COUNTER_TYPE=long long;Z_SOLO=1;_WIN32_WINNT=0x0601;NOMINMAX=1;WIN32_LEAN_AND_MEAN=1;_CRT_SECURE_NO_WARNINGS=1;_USE_MATH_DEFINES=1;_VARIADIC_MAX=10;_LIB;NDEBUG;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)\$(ProjectName)\$(ProjectName)\%(RelativeDir)\</ObjectFileName>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\modules\core\include;$(ProjectDir)\..\modules\imgproc\include;$(ProjectDir)\..\modules\videoio\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)\$(ProjectName)\$(ProjectName)\%(RelativeDir)\</AssemblerListingLocation>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

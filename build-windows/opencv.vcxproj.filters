@@ -1,0 +1,496 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{fc1aab7c-0047-4576-9ce5-8c6a008bea6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\opencv_core">
+      <UniqueIdentifier>{861f3c90-aac1-436e-9e09-d2ee3d24c5a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\opencv_core\src">
+      <UniqueIdentifier>{ec2ae303-a712-44da-867d-55e945e36361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\opencv_imgproc">
+      <UniqueIdentifier>{ec1a8016-527e-460b-b619-c183b4ae1983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\opencv_imgproc\src">
+      <UniqueIdentifier>{3008f061-5d0c-4b51-b77e-2446644aad57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\opencv_videoio">
+      <UniqueIdentifier>{180ff1d5-94d9-4cce-bf29-36b4b4e7835b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\opencv_videoio\src">
+      <UniqueIdentifier>{bd609d7e-9a16-4f81-89d4-0775de5627ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\opencv_core\src\utils">
+      <UniqueIdentifier>{fd5fe2d6-aef6-4848-b9f4-5cb9fca5d1e9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\modules\core\src\algorithm.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\alloc.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\arithm.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\arithm.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\array.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\async.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\batch_distance.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\bindings_utils.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\buffer_area.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\channels.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\check.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\command_line_parser.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\conjugate_gradient.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\convert.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\convert_c.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\convert_scale.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\copy.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\count_non_zero.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\cuda_gpu_mat.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\cuda_host_mem.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\cuda_info.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\cuda_stream.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\datastructs.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\directx.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\downhill_simplex.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\dxt.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\gl_core_3_1.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\glob.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\hal_internal.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\kmeans.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\lapack.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\lda.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\logger.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\lpsolver.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\lut.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\mathfuncs.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\mathfuncs_core.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matmul.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matrix.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matrix_c.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matrix_decomp.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matrix_expressions.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matrix_iterator.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matrix_operations.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matrix_sparse.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matrix_transform.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\matrix_wrap.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\mean.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\merge.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\minmax.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\norm.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\ocl.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\opengl.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\out.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\ovx.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\parallel.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\parallel_impl.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\pca.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\persistence.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\persistence_base64.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\persistence_c.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\persistence_cpp.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\persistence_json.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\persistence_types.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\persistence_xml.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\persistence_yml.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\rand.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\softfloat.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\split.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\stat.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\stat_c.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\stl.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\sum.dispatch.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\system.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\tables.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\trace.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\types.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\umatrix.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\va_intel.cpp">
+      <Filter>source\opencv_core\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\utils\datafile.cpp">
+      <Filter>source\opencv_core\src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\utils\filesystem.cpp">
+      <Filter>source\opencv_core\src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\utils\samples.cpp">
+      <Filter>source\opencv_core\src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\accum.avx.cpp">
+      <Filter>source\opencv_imgproc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\accum.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\accum.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\approx.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\bilateral_filter.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\blend.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\box_filter.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\canny.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\clahe.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\color.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\color_hsv.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\color_lab.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\color_rgb.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\color_yuv.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\colormap.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\connectedcomponents.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\contours.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\convhull.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\corner.avx.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\corner.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\cornersubpix.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\demosaicing.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\deriv.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\distransform.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\drawing.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\emd.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\featureselect.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\filter.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\floodfill.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\gabor.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\generalized_hough.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\geometry.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\grabcut.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\hershey_fonts.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\histogram.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\hough.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\imgwarp.avx2.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\imgwarp.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\imgwarp.sse4_1.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\intersection.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\linefit.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\lsd.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\main.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\matchcontours.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\median_blur.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\min_enclosing_triangle.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\moments.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\morph.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\phasecorr.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\pyramids.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\resize.avx2.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\resize.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\resize.sse4_1.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\rotcalipers.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\samplers.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\segmentation.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\shapedescr.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\smooth.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\spatialgradient.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\subdivision2d.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\sumpixels.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\tables.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\templmatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\thresh.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\undistort.dispatch.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\imgproc\src\utils.cpp">
+      <Filter>source\opencv_imgproc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\videoio\src\cap.cpp">
+      <Filter>source\opencv_videoio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\videoio\src\cap_cmu.cpp">
+      <Filter>source\opencv_videoio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\videoio\src\cap_msmf.cpp">
+      <Filter>source\opencv_videoio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\videoio\src\container_avi.cpp">
+      <Filter>source\opencv_videoio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\videoio\src\videoio_c.cpp">
+      <Filter>source\opencv_videoio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\videoio\src\videoio_registry.cpp">
+      <Filter>source\opencv_videoio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\core\src\mathfuncs_core.avx.cpp">
+      <Filter>source\opencv_core</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
