@@ -70,8 +70,6 @@ static void init_MFCreateDXGIDeviceManager()
 
 #include <comdef.h>
 
-#include <shlwapi.h>  // QISearch
-
 struct IMFMediaType;
 struct IMFActivate;
 struct IMFMediaSource;
@@ -130,7 +128,7 @@ public:
     HRESULT As(_Out_ ComPtr<U>& lp) const
     {
         lp.Release();
-        return p->QueryInterface(__uuidof(U), reinterpret_cast<void**>((T**)&lp));
+        return p->QueryInterface(__uuidof(U), reinterpret_cast<void**>(&lp));
     }
 private:
     _COM_SMARTPTR_TYPEDEF(T, __uuidof(T));
@@ -309,34 +307,53 @@ class SourceReaderCB : public IMFSourceReaderCallback
 {
 public:
     SourceReaderCB() :
-        m_nRefCount(0), m_hEvent(CreateEvent(NULL, FALSE, FALSE, NULL)), m_bEOS(FALSE), m_hrStatus(S_OK), m_reader(NULL), m_dwStreamIndex(0), m_lastSampleTimestamp(0)
+        m_nRefCount(0), m_set(false), m_bEOS(FALSE), m_hrStatus(S_OK), m_reader(NULL), m_dwStreamIndex(0), m_lastSampleTimestamp(0)
     {
+        InitializeSRWLock(&this->m_mutex);
+        InitializeConditionVariable(&this->m_cond);
     }
 
     // IUnknown methods
-    STDMETHODIMP QueryInterface(REFIID iid, void** ppv) CV_OVERRIDE
+    STDMETHODIMP QueryInterface(REFIID iid, void **ppv) CV_OVERRIDE
     {
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable:4838)
-#endif
-        static const QITAB qit[] =
+        if (NULL != ppv)
         {
-            QITABENT(SourceReaderCB, IMFSourceReaderCallback),
-            { 0 },
-        };
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-        return QISearch(this, qit, iid, ppv);
+            if ((__uuidof(IMFSourceReaderCallback) == iid) || (__uuidof(IUnknown) == iid))
+            {
+                (*ppv) = static_cast<IMFSourceReaderCallback *>(this);
+                static_cast<IMFSourceReaderCallback *>(this)->AddRef();
+                return S_OK;
+            }
+            else
+            {
+                (*ppv) = NULL;
+                return E_NOINTERFACE;
+            }
+        }
+        else
+        {
+            return E_POINTER;
+        }
     }
     STDMETHODIMP_(ULONG) AddRef() CV_OVERRIDE
     {
+#if defined(__clang__)
+        // CLANG-CL
+        return __atomic_add_fetch(&m_nRefCount, 1U, __ATOMIC_ACQ_REL);
+#else
+        // MSVC
         return InterlockedIncrement(&m_nRefCount);
+#endif
     }
     STDMETHODIMP_(ULONG) Release() CV_OVERRIDE
     {
+#if defined(__clang__)
+        // CLANG-CL
+        ULONG uCount = __atomic_sub_fetch(&m_nRefCount, 1U, __ATOMIC_ACQ_REL);
+#else
+        // MSVC
         ULONG uCount = InterlockedDecrement(&m_nRefCount);
+#endif
         if (uCount == 0)
         {
             delete this;
@@ -347,7 +364,8 @@ public:
     STDMETHODIMP OnReadSample(HRESULT hrStatus, DWORD dwStreamIndex, DWORD dwStreamFlags, LONGLONG llTimestamp, IMFSample *pSample) CV_OVERRIDE
     {
         HRESULT hr = 0;
-        cv::AutoLock lock(m_mutex);
+
+        AcquireSRWLockExclusive(&this->m_mutex);
 
         if (SUCCEEDED(hrStatus))
         {
@@ -372,18 +390,33 @@ public:
             // Reached the end of the stream.
             m_bEOS = true;
         }
+
         m_hrStatus = hrStatus;
+
+        if (pSample || m_bEOS)
+        {
+            this->m_set = true;
+
+            WakeConditionVariable(&this->m_cond);
+        }
+
+        ReleaseSRWLockExclusive(&this->m_mutex);
 
         if (FAILED(hr = m_reader->ReadSample(dwStreamIndex, 0, NULL, NULL, NULL, NULL)))
         {
             CV_LOG_WARNING(NULL, "videoio(MSMF): async ReadSample() call is failed with error status: " << hr);
+
+            AcquireSRWLockExclusive(&this->m_mutex);
+
             m_bEOS = true;
+
+            this->m_set = true;
+
+            WakeConditionVariable(&this->m_cond);
+
+            ReleaseSRWLockExclusive(&this->m_mutex);
         }
 
-        if (pSample || m_bEOS)
-        {
-            SetEvent(m_hEvent);
-        }
         return S_OK;
     }
 
@@ -398,41 +431,76 @@ public:
 
     HRESULT Wait(DWORD dwMilliseconds, _ComPtr<IMFSample>& videoSample, BOOL& pbEOS)
     {
+        HRESULT hrStatus;
+
+        double const tick_count_frenquency = cv::getTickFrequency();
+        int64 const tick_count_length = tick_count_frenquency * (static_cast<double>(dwMilliseconds) * 0.001);
+
+        AcquireSRWLockExclusive(&this->m_mutex);
+
         pbEOS = FALSE;
 
-        DWORD dwResult = WaitForSingleObject(m_hEvent, dwMilliseconds);
-        if (dwResult == WAIT_TIMEOUT)
+        int64 const tick_count_base = cv::getTickCount();
+        int64 tick_count_current;
+        while ((!this->m_set) && ((tick_count_current = cv::getTickCount()) < (tick_count_base + tick_count_length)))
         {
-            return E_PENDING;
-        }
-        else if (dwResult != WAIT_OBJECT_0)
-        {
-            return HRESULT_FROM_WIN32(GetLastError());
-        }
-
-        pbEOS = m_bEOS;
-        if (!pbEOS)
-        {
-            cv::AutoLock lock(m_mutex);
-            videoSample = m_lastSample;
-            CV_Assert(videoSample);
-            m_lastSample.Release();
-            ResetEvent(m_hEvent);  // event is auto-reset, but we need this forced reset due time gap between wait() and mutex hold.
+            CV_Assert(tick_count_current >= tick_count_base);
+            int64 tick_count_wait = (tick_count_base + tick_count_length) - tick_count_current;
+            DWORD ms_wait = static_cast<double>(tick_count_wait) / (tick_count_frenquency * 0.001);
+            BOOL res_wait = SleepConditionVariableSRW(&this->m_cond, &this->m_mutex, ms_wait, 0U);
+            CV_Assert((FALSE != res_wait) || (GetLastError() == ERROR_TIMEOUT));
         }
 
-        return m_hrStatus;
+        if (true == this->m_set)
+        {
+            pbEOS = m_bEOS;
+            
+            if (!pbEOS)
+            {
+                // Auto Reset
+                this->m_set = false;
+
+                videoSample = m_lastSample;
+                CV_Assert(videoSample);
+                m_lastSample.Release();
+            }
+            else
+            {
+                // Do Not Reset
+                CV_Assert(true == this->m_set);
+            }
+
+            hrStatus = m_hrStatus;
+        }
+        else
+        {
+            hrStatus = E_PENDING;
+        }
+
+        ReleaseSRWLockExclusive(&this->m_mutex);
+
+        return hrStatus;
     }
 private:
     // Destructor is private. Caller should call Release.
     virtual ~SourceReaderCB()
     {
+        // DeleteSRWLock(&this->m_mutex);
+        // DeleteConditionVariable(&this->my_cond);
         CV_LOG_WARNING(NULL, "terminating async callback");
     }
 
 public:
-    long                m_nRefCount;        // Reference count.
-    cv::Mutex           m_mutex;
-    HANDLE              m_hEvent;
+#if defined(__clang__)
+    // CLANG-CL
+    uint32_t            m_nRefCount;
+#else
+    // MSVC
+    LONG volatile       m_nRefCount;
+#endif
+    SRWLOCK             m_mutex;
+    CONDITION_VARIABLE  m_cond;
+    bool                m_set;
     BOOL                m_bEOS;
     HRESULT             m_hrStatus;
 
@@ -586,7 +654,7 @@ protected:
     bool configureHW(bool enable);
 
     template <typename CtrlT>
-    bool readComplexPropery(long prop, long& val) const;
+    bool readComplexPropery(long prop, long& val, long &flags) const;
     template <typename CtrlT>
     bool writeComplexProperty(long prop, double val, long flags);
     _ComPtr<IMFAttributes> getDefaultSourceConfig(UINT32 num = 10);
@@ -792,9 +860,9 @@ bool CvCapture_MSMF::configureOutput(MediaType newType, cv::uint32_t outFormat)
             newFormat.sampleSize = newFormat.stride * newFormat.height;
             break;
         case CV_CAP_MODE_GRAY:
-            newFormat.subType = MFVideoFormat_YUY2;
+            newFormat.subType = MFVideoFormat_NV12;
             newFormat.stride = newFormat.width;
-            newFormat.sampleSize = newFormat.stride * newFormat.height * 3 / 2;
+            newFormat.sampleSize = newFormat.stride * newFormat.height * 1.5;
             break;
         case CV_CAP_MODE_YUYV:
             newFormat.subType = MFVideoFormat_YUY2;
@@ -822,7 +890,7 @@ bool CvCapture_MSMF::open(int index)
         return false;
     DeviceList devices;
     UINT32 count = devices.read();
-    if (count == 0 || static_cast<UINT32>(index) > count)
+    if (count == 0 || static_cast<UINT32>(index) >= count)
     {
         CV_LOG_DEBUG(NULL, "Device " << index << " not found (total " << count << " devices)");
         return false;
@@ -857,7 +925,7 @@ bool CvCapture_MSMF::open(const cv::String& _filename)
     // Set source reader parameters
     _ComPtr<IMFAttributes> attr = getDefaultSourceConfig();
     cv::AutoBuffer<wchar_t> unicodeFileName(_filename.length() + 1);
-    MultiByteToWideChar(CP_ACP, 0, _filename.c_str(), -1, unicodeFileName.data(), (int)_filename.length() + 1);
+    MultiByteToWideChar(CP_UTF8, 0, _filename.c_str(), -1, unicodeFileName.data(), (int)_filename.length() + 1);
     if (SUCCEEDED(MFCreateSourceReaderFromURL(unicodeFileName.data(), attr.Get(), &videoFileSource)))
     {
         isOpen = true;
@@ -1058,7 +1126,7 @@ bool CvCapture_MSMF::retrieveFrame(int, cv::OutputArray frame)
                     break;
                 case CV_CAP_MODE_RGB:
                     if (captureMode == MODE_HW)
-                        cv::cvtColor(cv::Mat(captureFormat.height, captureFormat.width, CV_8UC4, ptr, pitch), frame, cv::COLOR_BGRA2BGR);
+                        cv::cvtColor(cv::Mat(captureFormat.height, captureFormat.width, CV_8UC4, ptr, pitch), frame, cv::COLOR_BGRA2RGB);
                     else
                         cv::cvtColor(cv::Mat(captureFormat.height, captureFormat.width, CV_8UC3, ptr, pitch), frame, cv::COLOR_BGR2RGB);
                     break;
@@ -1114,7 +1182,7 @@ bool CvCapture_MSMF::setTime(double time, bool rough)
 }
 
 template <typename CtrlT>
-bool CvCapture_MSMF::readComplexPropery(long prop, long & val) const
+bool CvCapture_MSMF::readComplexPropery(long prop, long & val, long & flags) const
 {
     _ComPtr<CtrlT> ctrl;
     if (FAILED(videoFileSource->GetServiceForStream((DWORD)MF_SOURCE_READER_MEDIASOURCE, GUID_NULL, IID_PPV_ARGS(&ctrl))))
@@ -1122,26 +1190,28 @@ bool CvCapture_MSMF::readComplexPropery(long prop, long & val) const
         CV_LOG_DEBUG(NULL, "Failed to get service for stream");
         return false;
     }
-    long paramVal, paramFlag;
-    if (FAILED(ctrl->Get(prop, &paramVal, &paramFlag)))
+    long paramVal, paramFlags;
+    if (FAILED(ctrl->Get(prop, &paramVal, &paramFlags)))
     {
         CV_LOG_DEBUG(NULL, "Failed to get property " << prop);
         // we continue
     }
     // fallback - get default value
     long minVal, maxVal, stepVal;
-    if (FAILED(ctrl->GetRange(prop, &minVal, &maxVal, &stepVal, &paramVal, &paramFlag)))
+    if (FAILED(ctrl->GetRange(prop, &minVal, &maxVal, &stepVal, &paramVal, &paramFlags)))
     {
         CV_LOG_DEBUG(NULL, "Failed to get default value for property " << prop);
         return false;
     }
     val = paramVal;
+    flags = paramFlags;
     return true;
 }
 
 double CvCapture_MSMF::getProperty( int property_id ) const
 {
     long cVal = 0;
+    long cFlags = 0;
     if (isOpen)
         switch (property_id)
         {
@@ -1178,83 +1248,83 @@ double CvCapture_MSMF::getProperty( int property_id ) const
             else
                 break;
         case CV_CAP_PROP_BRIGHTNESS:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Brightness, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Brightness, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_CONTRAST:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Contrast, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Contrast, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_SATURATION:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Saturation, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Saturation, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_HUE:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Hue, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Hue, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_GAIN:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Gain, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Gain, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_SHARPNESS:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Sharpness, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Sharpness, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_GAMMA:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Gamma, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_Gamma, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_BACKLIGHT:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_BacklightCompensation, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_BacklightCompensation, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_MONOCHROME:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_ColorEnable, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_ColorEnable, cVal, cFlags))
                 return cVal == 0 ? 1 : 0;
             break;
         case CV_CAP_PROP_TEMPERATURE:
-            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_WhiteBalance, cVal))
+            if (readComplexPropery<IAMVideoProcAmp>(VideoProcAmp_WhiteBalance, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_PAN:
-            if (readComplexPropery<IAMCameraControl>(CameraControl_Pan, cVal))
+            if (readComplexPropery<IAMCameraControl>(CameraControl_Pan, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_TILT:
-            if (readComplexPropery<IAMCameraControl>(CameraControl_Tilt, cVal))
+            if (readComplexPropery<IAMCameraControl>(CameraControl_Tilt, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_ROLL:
-            if (readComplexPropery<IAMCameraControl>(CameraControl_Roll, cVal))
+            if (readComplexPropery<IAMCameraControl>(CameraControl_Roll, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_IRIS:
-            if (readComplexPropery<IAMCameraControl>(CameraControl_Iris, cVal))
+            if (readComplexPropery<IAMCameraControl>(CameraControl_Iris, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_EXPOSURE:
         case CV_CAP_PROP_AUTO_EXPOSURE:
-            if (readComplexPropery<IAMCameraControl>(CameraControl_Exposure, cVal))
+            if (readComplexPropery<IAMCameraControl>(CameraControl_Exposure, cVal, cFlags))
             {
                 if (property_id == CV_CAP_PROP_EXPOSURE)
                     return cVal;
                 else
-                    return cVal == VideoProcAmp_Flags_Auto;
+                    return cFlags == CameraControl_Flags_Auto;
             }
             break;
         case CV_CAP_PROP_ZOOM:
-            if (readComplexPropery<IAMCameraControl>(CameraControl_Zoom, cVal))
+            if (readComplexPropery<IAMCameraControl>(CameraControl_Zoom, cVal, cFlags))
                 return cVal;
             break;
         case CV_CAP_PROP_FOCUS:
         case CV_CAP_PROP_AUTOFOCUS:
-            if (readComplexPropery<IAMCameraControl>(CameraControl_Focus, cVal))
+            if (readComplexPropery<IAMCameraControl>(CameraControl_Focus, cVal, cFlags))
             {
                 if (property_id == CV_CAP_PROP_FOCUS)
                     return cVal;
                 else
-                    return cVal == VideoProcAmp_Flags_Auto;
+                    return cFlags == CameraControl_Flags_Auto;
             }
             break;
         case CV_CAP_PROP_WHITE_BALANCE_BLUE_U:
@@ -1306,7 +1376,18 @@ bool CvCapture_MSMF::setProperty( int property_id, double value )
                 return false;
             }
         case CV_CAP_PROP_FORMAT:
-            return configureOutput(newFormat, (int)cvRound(value));
+        {
+            int newOutputFormat = (int)cvRound(value);
+            if (configureOutput(newFormat, newOutputFormat))
+            {
+                outputFormat = newOutputFormat;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         case CV_CAP_PROP_CONVERT_RGB:
             convertFormat = (value != 0);
             return configureOutput(newFormat, outputFormat);
@@ -1390,7 +1471,7 @@ bool CvCapture_MSMF::setProperty( int property_id, double value )
         case CV_CAP_PROP_EXPOSURE:
             return writeComplexProperty<IAMCameraControl>(CameraControl_Exposure, value, CameraControl_Flags_Manual);
         case CV_CAP_PROP_AUTO_EXPOSURE:
-            return writeComplexProperty<IAMCameraControl>(CameraControl_Exposure, value, value != 0 ? VideoProcAmp_Flags_Auto : VideoProcAmp_Flags_Manual);
+            return writeComplexProperty<IAMCameraControl>(CameraControl_Exposure, value, value != 0 ? CameraControl_Flags_Auto : CameraControl_Flags_Manual );
         case CV_CAP_PROP_ZOOM:
             return writeComplexProperty<IAMCameraControl>(CameraControl_Zoom, value, CameraControl_Flags_Manual);
         case CV_CAP_PROP_FOCUS:
@@ -1593,7 +1674,7 @@ bool CvVideoWriter_MSMF::open( const cv::String& filename, int fourcc,
     {
         // Create the sink writer
         cv::AutoBuffer<wchar_t> unicodeFileName(filename.length() + 1);
-        MultiByteToWideChar(CP_ACP, 0, filename.c_str(), -1, unicodeFileName.data(), (int)filename.length() + 1);
+        MultiByteToWideChar(CP_UTF8, 0, filename.c_str(), -1, unicodeFileName.data(), (int)filename.length() + 1);
         HRESULT hr = MFCreateSinkWriterFromURL(unicodeFileName.data(), NULL, spAttr.Get(), &sinkWriter);
         if (SUCCEEDED(hr))
         {
@@ -1650,7 +1731,19 @@ void CvVideoWriter_MSMF::write(cv::InputArray img)
         SUCCEEDED(buffer->Lock(&pData, NULL, NULL)))
     {
         // Copy the video frame to the buffer.
-        cv::cvtColor(img.getMat(), cv::Mat(videoHeight, videoWidth, CV_8UC4, pData, cbWidth), img.channels() > 1 ? cv::COLOR_BGR2BGRA : cv::COLOR_GRAY2BGRA);
+        if (img.channels() == 4)
+        { 
+            img.getMat().copyTo(cv::Mat(videoHeight, videoWidth, CV_8UC4, pData, cbWidth));
+        }
+        else if (img.channels() == 3)
+        { 
+            cv::cvtColor(img.getMat(), cv::Mat(videoHeight, videoWidth, CV_8UC4, pData, cbWidth), cv::COLOR_BGR2BGRA);
+        }
+        else
+        {
+            CV_Assert(img.channels() == 1);
+            cv::cvtColor(img.getMat(), cv::Mat(videoHeight, videoWidth, CV_8UC4, pData, cbWidth), cv::COLOR_GRAY2BGRA);         
+        }
         buffer->Unlock();
         // Send media sample to the Sink Writer.
         if (SUCCEEDED(sinkWriter->WriteSample(streamIndex, sample.Get())))

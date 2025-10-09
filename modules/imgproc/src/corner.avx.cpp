@@ -41,6 +41,8 @@
 //
 //M*/
 
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
+
 #include "precomp.hpp"
 #undef CV_FORCE_SIMD128_CPP  // expected AVX implementation only
 #include "opencv2/core/hal/intrin.hpp"
@@ -179,4 +181,11 @@ int cornerEigenValsVecsLine_AVX(const float* dxdata, const float* dydata, float*
 }
 
 }
+
+#elif defined(__aarch64__) || defined(__arm__) || defined(_M_ARM64) || defined(_M_ARM)
+
+#else
+#error Unknown Architecture
+#endif
+
 /* End of file */

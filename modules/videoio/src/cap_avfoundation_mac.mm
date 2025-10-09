@@ -44,7 +44,8 @@
 #include "opencv2/imgproc.hpp"
 #include <stdio.h>
 #include <Availability.h>
-#import <AVFoundation/AVFoundation.h>
+#include <AVFoundation/AVFoundation.h>
+#include <AppKit/AppKit.h>
 
 /********************** Declaration of class headers ************************/
 
@@ -320,40 +321,66 @@ int CvCaptureCAM::startCaptureDevice(int cameraNum) {
 #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101400
     if (@available(macOS 10.14, *))
     {
-        AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-        if (status == AVAuthorizationStatusDenied)
+        AVAuthorizationStatus authorization_status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+
+        if (AVAuthorizationStatusAuthorized == authorization_status)
         {
-            fprintf(stderr, "OpenCV: camera access has been denied. Either run 'tccutil reset Camera' "
-                            "command in same terminal to reset application authorization status, "
-                            "either modify 'System Preferences -> Security & Privacy -> Camera' "
-                            "settings for your application.\n");
-            [localpool drain];
-            return 0;
+            // Do Nothing
         }
-        else if (status != AVAuthorizationStatusAuthorized)
+        else if (AVAuthorizationStatusNotDetermined == authorization_status)
         {
-            if (!cv::utils::getConfigurationParameterBool("OPENCV_AVFOUNDATION_SKIP_AUTH", false))
+            __block bool block_granted = false;
+            __block bool block_completed = false;
+
+            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
+                                     completionHandler:^(BOOL granted) {
+                                       __atomic_store_n(&block_granted, ((NO != granted) ? true : false), __ATOMIC_RELEASE);
+                                       __atomic_store_n(&block_completed, true, __ATOMIC_RELEASE);
+                                     }];
+
+            assert(CFRunLoopGetMain() == CFRunLoopGetCurrent());
+
+            while (!__atomic_load_n(&block_completed, __ATOMIC_ACQUIRE))
             {
-                fprintf(stderr, "OpenCV: not authorized to capture video (status %ld), requesting...\n", status);
-                [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL) { /* we don't care */}];
-                if ([NSThread isMainThread])
-                {
-                    // we run the main loop for 0.1 sec to show the message
-                    [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-                }
-                else
-                {
-                    fprintf(stderr, "OpenCV: can not spin main run loop from other thread, set "
-                                    "OPENCV_AVFOUNDATION_SKIP_AUTH=1 to disable authorization request "
-                                    "and perform it in your application.\n");
-                }
+                NSAutoreleasePool *run_loop_pool = [[NSAutoreleasePool alloc] init];
+                CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.1, YES);
+                [run_loop_pool drain];
+            }
+
+            if (!__atomic_load_n(&block_granted, __ATOMIC_ACQUIRE))
+            {
+                [localpool drain];
+                return 0;
+            }
+        }
+        else
+        {
+            assert((AVAuthorizationStatusDenied == authorization_status) || (AVAuthorizationStatusRestricted == authorization_status));
+
+            if (@available(macOS 13.0, *))
+            {
+                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Camera"]];
+            }
+            else if (@available(macOS 10.6, *))
+            {
+                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Camera"]];
             }
             else
             {
-                fprintf(stderr, "OpenCV: not authorized to capture video (status %ld), set "
-                                "OPENCV_AVFOUNDATION_SKIP_AUTH=0 to enable authorization request or "
-                                "perform it in your application.\n", status);
+                // We can NOT be later than macOS 10.14 and early than macOS 10.6 at the same time
+                assert(false);
+                if (CFRunLoopGetMain() == CFRunLoopGetCurrent())
+                {
+                    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Camera"]];
+                }
+                else
+                {
+                    CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopDefaultMode, ^{
+                      [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Camera"]];
+                    });
+                }
             }
+
             [localpool drain];
             return 0;
         }
@@ -398,7 +425,8 @@ int CvCaptureCAM::startCaptureDevice(int cameraNum) {
     // create output
     mCapture = [[CaptureDelegate alloc] init];
     mCaptureVideoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
-    dispatch_queue_t queue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_attr_t attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+    dispatch_queue_t queue = dispatch_queue_create("cameraQueue", attr);
     [mCaptureVideoDataOutput setSampleBufferDelegate: mCapture queue: queue];
     dispatch_release(queue);
 
@@ -744,6 +772,31 @@ CvCaptureFile::CvCaptureFile(const char* filename) {
     mAsset = [[AVAsset assetWithURL:[NSURL fileURLWithPath: @(filename)]] retain];
 
     if ( mAsset == nil ) {
+
+        if (@available(macOS 13.0, *))
+        {
+            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_FilesAndFolders"]];
+        }
+        else if (@available(macOS 10.6, *))
+        {
+            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"]];
+        }
+        else
+        {
+            // We can NOT be later than macOS 10.14 (TCC) and early than macOS 10.6 at the same time
+            assert(false);
+            if (CFRunLoopGetMain() == CFRunLoopGetCurrent())
+            {
+                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"]];
+            }
+            else
+            {
+                CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopDefaultMode, ^{
+                  [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"]];
+                });
+            }
+        }
+
         fprintf(stderr, "OpenCV: Couldn't read movie file \"%s\"\n", filename);
         [localpool drain];
         started = 0;
@@ -752,6 +805,31 @@ CvCaptureFile::CvCaptureFile(const char* filename) {
 
     NSArray *tracks = [mAsset tracksWithMediaType:AVMediaTypeVideo];
     if ([tracks count] == 0) {
+
+        if (@available(macOS 13.0, *))
+        {
+            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_FilesAndFolders"]];
+        }
+        else if (@available(macOS 10.6, *))
+        {
+            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"]];
+        }
+        else
+        {
+            // We can NOT be later than macOS 10.14 (TCC) and early than macOS 10.6 at the same time
+            assert(false);
+            if (CFRunLoopGetMain() == CFRunLoopGetCurrent())
+            {
+                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"]];
+            }
+            else
+            {
+                CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopDefaultMode, ^{
+                  [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"]];
+                });
+            }
+        }
+
         fprintf(stderr, "OpenCV: Couldn't read video stream from file \"%s\"\n", filename);
         [localpool drain];
         started = 0;
@@ -761,6 +839,31 @@ CvCaptureFile::CvCaptureFile(const char* filename) {
     mAssetTrack = [tracks[0] retain];
 
     if ( ! setupReadingAt(kCMTimeZero) ) {
+
+        if (@available(macOS 13.0, *))
+        {
+            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_FilesAndFolders"]];
+        }
+        else if (@available(macOS 10.6, *))
+        {
+            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"]];
+        }
+        else
+        {
+            // We can NOT be later than macOS 10.14 (TCC) and early than macOS 10.6 at the same time
+            assert(false);
+            if (CFRunLoopGetMain() == CFRunLoopGetCurrent())
+            {
+                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"]];
+            }
+            else
+            {
+                CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopDefaultMode, ^{
+                  [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders"]];
+                });
+            }
+        }
+
         fprintf(stderr, "OpenCV: Couldn't read movie file \"%s\"\n", filename);
         [localpool drain];
         started = 0;

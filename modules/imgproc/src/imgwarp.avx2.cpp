@@ -47,6 +47,8 @@
 //
 // */
 
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
+
 #include "precomp.hpp"
 #include "imgwarp.hpp"
 
@@ -95,4 +97,11 @@ int warpAffineBlockline(int *adelta, int *bdelta, short* xy, short* alpha, int X
 
 }
 }
+
+#elif defined(__aarch64__) || defined(__arm__) || defined(_M_ARM64) || defined(_M_ARM)
+
+#else
+#error Unknown Architecture
+#endif
+
 /* End of file. */

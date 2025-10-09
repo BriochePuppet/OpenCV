@@ -55,13 +55,6 @@
 //#define OPENCV_ALLOC_ENABLE_STATISTICS
 #define OPENCV_ALLOC_STATISTICS_LIMIT 4096  // don't track buffers less than N bytes
 
-
-#ifdef HAVE_POSIX_MEMALIGN
-#include <stdlib.h>
-#elif defined HAVE_MALLOC_H
-#include <malloc.h>
-#endif
-
 #ifdef OPENCV_ALLOC_ENABLE_STATISTICS
 #include <map>
 #endif
@@ -82,45 +75,6 @@ cv::utils::AllocatorStatisticsInterface& getAllocatorStatistics()
     return allocator_stats;
 }
 
-#if defined HAVE_POSIX_MEMALIGN || defined HAVE_MEMALIGN
-static bool readMemoryAlignmentParameter()
-{
-    bool value = true;
-#if defined(__GLIBC__) && defined(__linux__) \
-    && !defined(CV_STATIC_ANALYSIS) \
-    && !defined(OPENCV_ENABLE_MEMORY_SANITIZER) \
-    && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)  /* oss-fuzz */ \
-    && !defined(_WIN32)  /* MinGW? */
-    {
-        // https://github.com/opencv/opencv/issues/15526
-        value = false;
-    }
-#endif
-    value = cv::utils::getConfigurationParameterBool("OPENCV_ENABLE_MEMALIGN", value);  // should not call fastMalloc() internally
-    // TODO add checks for valgrind, ASAN if value == false
-    return value;
-}
-static inline
-bool isAlignedAllocationEnabled()
-{
-    static bool initialized = false;
-    static bool useMemalign = true;
-    if (!initialized)
-    {
-        initialized = true;  // trick to avoid stuck in acquire (works only if allocations are scope based)
-        useMemalign = readMemoryAlignmentParameter();
-    }
-    return useMemalign;
-}
-// do not use variable directly, details: https://github.com/opencv/opencv/issues/15691
-static const bool g_force_initialization_memalign_flag
-#if defined __GNUC__
-    __attribute__((unused))
-#endif
-    = isAlignedAllocationEnabled();
-
-#endif
-
 #ifdef OPENCV_ALLOC_ENABLE_STATISTICS
 static inline
 void* fastMalloc_(size_t size)
@@ -128,31 +82,21 @@ void* fastMalloc_(size_t size)
 void* fastMalloc(size_t size)
 #endif
 {
-#ifdef HAVE_POSIX_MEMALIGN
-    if (isAlignedAllocationEnabled())
-    {
-        void* ptr = NULL;
-        if(posix_memalign(&ptr, CV_MALLOC_ALIGN, size))
-            ptr = NULL;
-        if(!ptr)
-            return OutOfMemoryError(size);
-        return ptr;
-    }
-#elif defined HAVE_MEMALIGN
-    if (isAlignedAllocationEnabled())
-    {
-        void* ptr = memalign(CV_MALLOC_ALIGN, size);
-        if(!ptr)
-            return OutOfMemoryError(size);
-        return ptr;
-    }
-#endif
-    uchar* udata = (uchar*)malloc(size + sizeof(void*) + CV_MALLOC_ALIGN);
-    if(!udata)
+#if defined(__GNUC__)
+    // GCC or CLANG
+    void *ptr = NULL;
+    if (posix_memalign(&ptr, CV_MALLOC_ALIGN, size))
+        ptr = NULL;
+    if (!ptr)
         return OutOfMemoryError(size);
-    uchar** adata = alignPtr((uchar**)udata + 1, CV_MALLOC_ALIGN);
-    adata[-1] = udata;
-    return adata;
+    return ptr;
+#elif defined(_MSC_VER)
+    // MSVC or CLANG-CL
+    void* ptr = _aligned_malloc(size, CV_MALLOC_ALIGN);
+    if(!ptr)
+        return OutOfMemoryError(size);
+    return ptr;
+#endif
 }
 
 #ifdef OPENCV_ALLOC_ENABLE_STATISTICS
@@ -162,20 +106,13 @@ void fastFree_(void* ptr)
 void fastFree(void* ptr)
 #endif
 {
-#if defined HAVE_POSIX_MEMALIGN || defined HAVE_MEMALIGN
-    if (isAlignedAllocationEnabled())
-    {
-        free(ptr);
-        return;
-    }
+#if defined(__GNUC__)
+    free(ptr);
+    return;
+#elif defined(_MSC_VER)
+    _aligned_free(ptr);
+    return;
 #endif
-    if(ptr)
-    {
-        uchar* udata = ((uchar**)ptr)[-1];
-        CV_DbgAssert(udata < (uchar*)ptr &&
-               ((uchar*)ptr - udata) <= (ptrdiff_t)(sizeof(void*)+CV_MALLOC_ALIGN));
-        free(udata);
-    }
 }
 
 #ifdef OPENCV_ALLOC_ENABLE_STATISTICS

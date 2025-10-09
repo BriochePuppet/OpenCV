@@ -47,6 +47,8 @@
 //
 // */
 
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
+
 #include "precomp.hpp"
 #include "resize.hpp"
 
@@ -227,4 +229,11 @@ int VResizeLanczos4Vec_32f16u_SSE41(const float** src, ushort* dst, const float*
 
 }
 }
+
+#elif defined(__aarch64__) || defined(__arm__) || defined(_M_ARM64) || defined(_M_ARM)
+
+#else
+#error Unknown Architecture
+#endif
+
 /* End of file. */

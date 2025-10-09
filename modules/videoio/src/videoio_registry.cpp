@@ -103,10 +103,6 @@ static const struct VideoBackendInfo builtin_backends[] =
     DECLARE_BACKEND(CAP_INTELPERC, "INTEL_PERC", MODE_CAPTURE_BY_INDEX),
 #endif
 
-    // OpenCV file-based only
-    DECLARE_BACKEND(CAP_IMAGES, "CV_IMAGES", MODE_CAPTURE_BY_FILENAME | MODE_WRITER),
-    DECLARE_BACKEND(CAP_OPENCV_MJPEG, "CV_MJPEG", MODE_CAPTURE_BY_FILENAME | MODE_WRITER),
-
     // special interfaces / stereo cameras / other SDKs
 #if defined(HAVE_DC1394_2) || defined(HAVE_DC1394) || defined(HAVE_CMU1394)
     DECLARE_BACKEND(CAP_FIREWIRE, "FIREWIRE", MODE_CAPTURE_BY_INDEX),
@@ -558,9 +554,6 @@ void VideoCapture_create(CvCapture*& capture, Ptr<IVideoCapture>& icap, VideoCap
         TRY_OPEN_LEGACY(cvCreateCameraCapture_XIMEA(filename.c_str()))
         break;
 #endif
-    case CAP_IMAGES:
-        TRY_OPEN_LEGACY(cvCreateFileCapture_Images(filename.c_str()))
-        break;
 #ifdef HAVE_FFMPEG
     case CAP_FFMPEG:
         TRY_OPEN(cvCreateFileCapture_FFMPEG_proxy(filename))
@@ -591,9 +584,6 @@ void VideoCapture_create(CvCapture*& capture, Ptr<IVideoCapture>& icap, VideoCap
         TRY_OPEN(makePtr<VideoCapture_IntelMFX>(filename))
         break;
 #endif
-    case CAP_OPENCV_MJPEG:
-        TRY_OPEN(createMotionJpegCapture(filename))
-        break;
     } // switch
 }
 
@@ -677,15 +667,6 @@ case CAP_GSTREAMER:
         CREATE_WRITER_LEGACY(cvCreateVideoWriter_GStreamer (filename.c_str(), fourcc, fps, cvSize(frameSize), isColor))
         break;
 #endif
-    case CAP_OPENCV_MJPEG:
-        CREATE_WRITER(createMotionJpegWriter(filename, fourcc, fps, frameSize, isColor));
-        break;
-    case CAP_IMAGES:
-        if(!fourcc || !fps)
-        {
-            CREATE_WRITER_LEGACY(cvCreateVideoWriter_Images(filename.c_str()));
-        }
-        break;
     } // switch(api)
 }
 

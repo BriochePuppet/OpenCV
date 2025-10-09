@@ -47,6 +47,8 @@
 //
 // */
 
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
+
 #include "precomp.hpp"
 #include "resize.hpp"
 
@@ -258,4 +260,11 @@ void resizeNN4_AVX2(const Range& range, const Mat& src, Mat &dst, int *x_ofs, do
 
 }
 }
+
+#elif defined(__aarch64__) || defined(__arm__) || defined(_M_ARM64) || defined(_M_ARM)
+
+#else
+#error Unknown Architecture
+#endif
+
 /* End of file. */
